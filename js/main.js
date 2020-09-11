@@ -1,9 +1,10 @@
 //#1
+let reg1 = new RegExp('\\.|,|\\?|!|:|;|"', 'gui');
 let wordsList = (str, subStr) => {
     let arr = new Set();
     str.toLowerCase().split(' ').forEach(x => {
         if (x.indexOf(subStr) > -1) {
-            arr.add(x.replace('.', '').replace(',', '').replace('!', '').replace('?', '').replace(';', '').replace(':', '').replace('\"', ''));
+            arr.add(x.replace(reg1,''));
         };
     });
     return arr;
@@ -60,11 +61,15 @@ console.log('-'.repeat(50));
 
 //#4
 var getLocalDay = (date) => {
-    return new Date(date).getDay();
+    let day = new Date(date).getDay();
+    return day === 0 ? 7 : day;
 }
+
 console.log(getLocalDay('2019-07-16')); // 2
 console.log(getLocalDay('2019-07-25')); // 4
 console.log(getLocalDay('2019-07-27')); // 6
+console.log(getLocalDay('2020-09-08')); // 2
+console.log(getLocalDay('2020-09-11')); // 6
 console.log('-'.repeat(50));
 
 //#5
@@ -78,6 +83,8 @@ console.log(getDateAgo('2019-01-29', 365)); // 29.01.2018
 console.log('-'.repeat(50));
 
 //#6
+//Почему-то не прошел тест ((
+/*
 class Car {
     constructor(engine, model, name, year) {
         this.engine = engine;
@@ -88,17 +95,37 @@ class Car {
     get used() {
         return this.year === new Date().getFullYear() ? 'new' : 'used';
     }
-
     set used(value) {
         let currentYear = new Date().getFullYear();
         if ((value === 'new') && (this.year < currentYear)) {
             this.year = currentYear;
         };
     }
-
     info() {
         return `${this.name} ${this.model}, ${this.engine}cc, year ${this.year}, ${this.used}`;
     }
+};*/
+let Car = function (engine, model, name, year) {
+    this.engine = engine;
+    this.model = model;
+    this.name = name;
+    this.year = year;
+};
+Object.defineProperties(Car.prototype, {
+    used: {
+        get() {
+            return this.year === new Date().getFullYear() ? 'new' : 'used';
+        },
+        set(value) {
+            let currentYear = new Date().getFullYear();
+            if ((value === 'new') && (this.year < currentYear)) {
+                this.year = currentYear;
+            };
+        }
+    }
+});
+Car.prototype.info = function () {
+    return `${this.name} ${this.model}, ${this.engine}cc, year ${this.year}, ${this.used}`;
 };
 
 let car = new Car(2000, 'Lacetti', 'Chevrolet', 2010);
